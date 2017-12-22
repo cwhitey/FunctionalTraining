@@ -58,11 +58,11 @@ object ComposingExercises {
   def subtract(a: Int, b: Int): Int = ???
 
   // We want to partially apply subtract
-  def minusThree: Int => Int = ???
+  def minusThree: Int => Int = (a => subtract(a, 3))
 
   // How do we create a new function from addTwo and minusThree?
   def addTwoMinusThree: Int => Int = ???
-  
+
   def prettyPrint(i:Int) = s"The number is $i"
 
   // Composing a composition!??

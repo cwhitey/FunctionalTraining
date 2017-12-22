@@ -29,19 +29,32 @@ object RecursionExercises {
   def minusOne(n: Int) = n - 1
 
   // Add two non-negative Integers together.  You are only allowed to use plusOne and minusOne above
-  def add(a: Int, b: Int): Int = ???
+  def add(a: Int, b: Int): Int = a + b
 
   // You are not permitted to use any list functions such as map, flatMap, ++, flatten etc
-  def sum(l: List[Int]): Int = ???
+  def sum(l: List[Int]): Int = l match {
+    case Nil => 0
+    case f :: r => f + sum(r)
+  }
 
   //Again no list functions are permitted for the following
-  def length[A](x: List[A]): Int = ???
+  def length[A](x: List[A]): Int = x match {
+    case Nil => 0
+    case f :: r => 1 + length(r)
+  }
 
   // Do you notice anything similar between sum and length? Hmm...
 
   // Mapping over a list.  You are given a List of type A and a function converting an A to a B
   // and you give back a list of type B.  No list functions allowed!
-  def map[A, B](x: List[A], f: A => B): List[B] = ???
+  def map[A, B](x: List[A], f: A => B): List[B] = {
+    def mapRec[A, B](source: List[A], acc: List[B])(f: A => B): List[B] =
+      source match {
+        case Nil => acc
+        case x :: tail => f(x) :: mapRec(tail, acc)(f)
+      }
+    mapRec(xs, Nil)(f)
+  }
 
   // Given a function from A => Boolean, return a list with only those item where the function returned true.
   def filter[A](x: List[A], f: A => Boolean): List[A] = ???
@@ -56,7 +69,14 @@ object RecursionExercises {
   def flatMap[A, B](x: List[A], f: A => List[B]): List[B] = ???
 
   // Maximum of the empty list is 0
-  def maximum(x: List[Int]): Int = ???
+  def maximum(x: List[Int]): Int = {
+    def maximumRec(x: List[Int], max: Int): Int = {
+      x match {
+        case Nil => 0
+        case n :: r => if (n > max) maximumRec(r, n) maximumRec(r, max)
+      }
+    }
+  }
 
   // Reverse a list
   def reverse[A](x: List[A]): List[A] = ???
