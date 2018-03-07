@@ -11,13 +11,18 @@ case class Not(expr: Expr) extends Expr
  */
 
 object Expr {
-  
+
   /**
    * Evaluate the expression.
    */
 
-  def eval(expr: Expr): Boolean = ???
-  
+  def eval(expr: Expr): Boolean = expr match {
+    case Const(b) => b
+    case And(x, y) => eval(x) && eval(y)
+    case Or(x, y) => eval(x) || eval(y)
+    case Not(e) => !eval(e)
+  }
+
   /**
    * Normalise the expression, such that:
    *
@@ -32,11 +37,21 @@ object Expr {
    * (Hint: You can and should normalize recursively)
    */
 
-  def normalise(expr: Expr): Expr = ???
-  
+  def normalise(expr: Expr): Expr = expr match {
+    case Not(Not(e)) => normalise(e)
+    case And(Not(x), Not(y)) => Not(Or(normalise(x), normalise(y)))
+    case Or(Not(x), Not(y)) => Not(And(normalise(x), normalise(y)))
+    case _ => expr
+  }
+
   /**
    * Show, using English lower-case words "and", "or", "not", "true", "false"
    */
-  
-  def show(expr: Expr): String = ???
+
+  def show(expr: Expr): String = expr match {
+    case Not(e) => s"not(${show(e)})"
+    case And(x, y) => s"and(${show(x)},${show(y)})"
+    case Or(x, y) => s"or(${show(x)},${show(y)})"
+    case Const(b) => b.toString()
+  }
 }

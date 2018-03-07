@@ -53,7 +53,7 @@ object RecursionExercises {
         case Nil => acc
         case x :: tail => f(x) :: mapRec(tail, acc)(f)
       }
-    mapRec(xs, Nil)(f)
+    mapRec(x, Nil)(f)
   }
 
   // Given a function from A => Boolean, return a list with only those item where the function returned true.
@@ -73,9 +73,11 @@ object RecursionExercises {
     def maximumRec(x: List[Int], max: Int): Int = {
       x match {
         case Nil => 0
-        case n :: r => if (n > max) maximumRec(r, n) maximumRec(r, max)
+        case n :: Nil => if (n > max) n else max
+        case n :: r => if (n > max) maximumRec(r, n) else maximumRec(r, max)
       }
     }
+    maximumRec(x, 0)
   }
 
   // Reverse a list

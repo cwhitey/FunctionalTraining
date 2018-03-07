@@ -4,17 +4,49 @@ import scalaz._, Scalaz._
 
 object ValidationExercises {
 
-  def validateKey(key: String, input: Map[String, String]): ValidationNel[ErrorCode, String] = ???
+  def validateKey(key: String, input: Map[String, String]): ValidationNel[ErrorCode, String] = {
+    input.get(key) match {
+      case Some(v) => Success(v)
+      case None => Failure(NonEmptyList(keyNotFound(key)))
+    }
+  }
 
-  def nameValidation(name: String, label: String): ValidationNel[ErrorCode, String] = ???
+  def nameValidation(name: String): ValidationNel[ErrorCode, String] = {
+    if(name.isEmpty())
+      Failure(NonEmptyList(nameIsEmpty(name)))
+    else
+      Success(name)
+  }
 
-  def passwordStrengthValidation(password: String): ValidationNel[ErrorCode, String] = ???
+  def passwordStrengthValidation(password: String): ValidationNel[ErrorCode, String] = {
+    if("""(\d+)""".r.findAllIn(password).isEmpty)
+      Failure(NonEmptyList(passwordTooWeak))
+    else
+      Success(password)
+  }
 
-  def passwordLengthValidation(password: String): ValidationNel[ErrorCode, String] = ???
+  def passwordLengthValidation(password: String): ValidationNel[ErrorCode, String] = {
+    if(password.length() > 0)
+      Success(password)
+    else
+      Failure(NonEmptyList(passwordTooShort))
+  }
 
-  def validateInput(input: Map[String, String]): ValidationNel[ErrorCode, Person] = ???
+  def validateInput(input: Map[String, String]): ValidationNel[ErrorCode, Person] = {
+    val firstNameVal = validateKey("firstName", input)
+    val firstName = firstNameVal.fold(e => firstNameVal, success => nameValidation(success))
+    val lastNameVal = validateKey("lastName", input)
+    val lastName = lastNameVal.fold(e => lastNameVal, success => nameValidation(success))
+    val passwordVal = validateKey("password", input)
+    val password = passwordVal.fold(e => passwordVal, success => success.successNel)
+    (firstName.ap(lastName).ap(password)) { Person(firstName, lastName, password) }
 
-
+    // for {
+    //   firstName <- validateKey("firstName", input).flatMap(nameValidation)
+    //   lastName <- validateKey("lastName", input).flatMap(nameValidation)
+    //   password <- validateKey("password", input).flatMap(p => passwordLengthValidation(p) <* passwordStrengthValidation(p))
+    // } yield Person(firstName, lastName, password)
+  }
 }
 
 case class Person(firstName: String, lastName: String, password: String)

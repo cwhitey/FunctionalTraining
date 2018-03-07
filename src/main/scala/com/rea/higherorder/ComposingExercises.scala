@@ -55,19 +55,19 @@ object ComposingExercises {
   def addTwo: Int => Int = x => add(x, 2)
 
   // Write a boring subtract function
-  def subtract(a: Int, b: Int): Int = ???
+  def subtract(a: Int, b: Int): Int = a - b
 
   // We want to partially apply subtract
   def minusThree: Int => Int = (a => subtract(a, 3))
 
   // How do we create a new function from addTwo and minusThree?
-  def addTwoMinusThree: Int => Int = ???
+  def addTwoMinusThree: Int => Int = addTwo.andThen(minusThree)
 
   def prettyPrint(i:Int) = s"The number is $i"
 
   // Composing a composition!??
-  def addTwoMinusThreePrettyPrint: Int => String = ???
+  def addTwoMinusThreePrettyPrint: Int => String = addTwoMinusThree.andThen(prettyPrint)
 
   // How do we convert (compose) f and g into a brand new function?
-  def compose_[A, B, C](f: B => C, g: A => B): A => C = ???
+  def compose_[A, B, C](f: B => C, g: A => B): A => C = g.andThen(f)
 }
